@@ -1,6 +1,5 @@
 const express = require('express');
 const axios = require('axios');
-const config = require('config');
 const router = express.Router();
 const auth = require('../../middleware/auth');
 const { check, validationResult } = require('express-validator');
@@ -11,7 +10,7 @@ const checkObjectId = require('../../middleware/checkObjectId');
 const Profile = require('../../models/Profile');
 const User = require('../../models/User');
 const Post = require('../../models/Post');
-
+require('dotenv').config()
 // @route    GET api/profile/me
 // @desc     Get current users profile
 // @access   Private
@@ -215,9 +214,11 @@ router.put(
   check('school', 'School is required').notEmpty(),
   check('degree', 'Degree is required').notEmpty(),
   check('fieldofstudy', 'Field of study is required').notEmpty(),
-  check('from', 'From date is required and needs to be from the past')
-    .notEmpty(),
-    // .custom((value, { req }) => (req.body.to ? value < req.body.to : true)),
+  check(
+    'from',
+    'From date is required and needs to be from the past'
+  ).notEmpty(),
+  // .custom((value, { req }) => (req.body.to ? value < req.body.to : true)),
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -267,7 +268,7 @@ router.get('/github/:username', async (req, res) => {
     );
     const headers = {
       'user-agent': 'node.js',
-      Authorization: `token ${config.get('githubToken')}`
+      Authorization: `token ${process.env.githubToken}`
     };
 
     const gitHubResponse = await axios.get(uri, { headers });

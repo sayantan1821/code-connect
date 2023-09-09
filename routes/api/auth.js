@@ -3,10 +3,27 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const auth = require('../../middleware/auth');
 const jwt = require('jsonwebtoken');
-const config = require('config');
+require('dotenv').config()
 const { check, validationResult } = require('express-validator');
 
 const User = require('../../models/User');
+
+//@description     Get or Search all users
+//@route           GET /api/auth/find?search=
+//@access          Public
+router.get('/find', auth, async (req, res) => {
+  const keyword = req.query.search
+    ? {
+        $or: [
+          { name: { $regex: req.query.search, $options: 'i' } },
+          { email: { $regex: req.query.search, $options: 'i' } }
+        ]
+      }
+    : {};
+
+  const users = await User.find(keyword).find({ _id: { $ne: req.user.id } });
+  res.send(users);
+});
 
 // @route    GET api/auth
 // @desc     Get user by token
@@ -33,7 +50,6 @@ router.post(
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-
     const { email, password } = req.body;
 
     try {
@@ -61,11 +77,18 @@ router.post(
 
       jwt.sign(
         payload,
-        config.get('jwtSecret'),
+        process.env.jwtSecret,
         { expiresIn: '5 days' },
         (err, token) => {
           if (err) throw err;
-          res.json({ token });
+          res.json({
+            _id: user.id,
+            name: user.name,
+            email: user.email,
+            isAdmin: user.isAdmin,
+            pic: user.pic,
+            token
+          });
         }
       );
     } catch (err) {

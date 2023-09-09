@@ -21,8 +21,8 @@ router.get('/', auth, async (req, res) => {
         res.status(200).send(results);
       });
   } catch (error) {
-    res.status(400);
-    throw new Error(error.message);
+    res.status(400).json({ error: 'server error' });
+    console.log(error);
   }
 });
 
@@ -35,7 +35,7 @@ router.post(
     const { userId } = req.body;
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res.status(400).json({ errors: errors.array() });  
     }
     if (!userId) {
       console.log('UserId param not sent with request');
@@ -137,22 +137,27 @@ router.put(
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-    const updatedChat = await Chat.findByIdAndUpdate(
-      chatId,
-      {
-        chatName: chatName
-      },
-      {
-        new: true
-      }
-    )
-      .populate('users', '-password')
-      .populate('groupAdmin', '-password');
+    try {
+      const updatedChat = await Chat.findByIdAndUpdate(
+        chatId,
+        {
+          chatName: chatName
+        },
+        {
+          new: true
+        }
+      )
+        .populate('users', '-password')
+        .populate('groupAdmin', '-password');
 
-    if (!updatedChat) {
-      res.status(404).json({ error: 'Chat Not Found' });
-    } else {
-      res.json(updatedChat);
+      if (!updatedChat) {
+        res.status(404).json({ error: 'Chat Not Found' });
+      } else {
+        res.json(updatedChat);
+      }
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ error: 'server error' });
     }
   }
 );
@@ -171,22 +176,27 @@ router.put(
     }
     // check if the requester is admin
 
-    const added = await Chat.findByIdAndUpdate(
-      chatId,
-      {
-        $push: { users: userId }
-      },
-      {
-        new: true
-      }
-    )
-      .populate('users', '-password')
-      .populate('groupAdmin', '-password');
+    try {
+      const added = await Chat.findByIdAndUpdate(
+        chatId,
+        {
+          $push: { users: userId }
+        },
+        {
+          new: true
+        }
+      )
+        .populate('users', '-password')
+        .populate('groupAdmin', '-password');
 
-    if (!added) {
-      res.status(404).json({error : 'Chat Not Found'});
-    } else {
-      res.json(added);
+      if (!added) {
+        res.status(404).json({ error: 'Chat Not Found' });
+      } else {
+        res.json(added);
+      }
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ error: 'server error' });
     }
   }
 );
