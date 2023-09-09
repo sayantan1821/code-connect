@@ -5,6 +5,7 @@ const chat = require('./routes/api/chat');
 const message = require('./routes/api/message');
 const app = express();
 const cors = require('cors');
+require('dotenv').config()
 
 connectDB();
 
