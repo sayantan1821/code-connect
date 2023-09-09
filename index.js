@@ -21,6 +21,9 @@ app.use('/api/profile', require('./routes/api/profile'));
 app.use('/api/posts', require('./routes/api/posts'));
 app.use('/api/chat', chat);
 app.use('/api/message', message);
+app.use("/", (req, res) => {
+  res.send("API is running");
+});
 
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static('client/build'));

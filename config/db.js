@@ -3,7 +3,7 @@ require('dotenv').config()
 
 const connectDB = async () => {
 	try {
-		await mongoose.connect(process.env.mongoURI, {
+		await mongoose.connect(process.env.MONGO_URI, {
 			useNewUrlParser: true,
 			useCreateIndex: true,
 			useFindAndModify: false,
