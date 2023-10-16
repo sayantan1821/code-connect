@@ -10,7 +10,11 @@ require('dotenv').config();
 connectDB();
 
 app.use(express.json());
-app.options('/products/:id', cors())
+
+app.use(cors({
+  origin: 'http://localhost:1822'
+}));
+
 app.use('/api/users', require('./routes/api/users'));
 app.use('/api/auth', require('./routes/api/auth'));
 app.use('/api/profile', require('./routes/api/profile'));
