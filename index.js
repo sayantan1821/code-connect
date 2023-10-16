@@ -42,7 +42,7 @@ const io = require('socket.io')(server, {
   //   // credentials: true,
   // }
   cors: {
-    origin: "http://localhost:1821",
+    origin: "http://localhost:1822",
     methods: ["GET", "POST"]
   }
 });
