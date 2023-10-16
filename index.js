@@ -10,11 +10,7 @@ require('dotenv').config();
 connectDB();
 
 app.use(express.json());
-app.use(
-  cors({
-    origin: '*'
-  })
-);
+app.options('/products/:id', cors())
 app.use('/api/users', require('./routes/api/users'));
 app.use('/api/auth', require('./routes/api/auth'));
 app.use('/api/profile', require('./routes/api/profile'));
@@ -40,10 +36,14 @@ const server = app.listen(PORT, () =>
 );
 const io = require('socket.io')(server, {
   pingTimeout: 60000,
+  // cors: {
+  //   origin: '*'
+  //   // methods:"*"
+  //   // credentials: true,
+  // }
   cors: {
-    origin: 'http://127.0.0.1:1822',
+    origin: "http://localhost:1821",
     methods: ["GET", "POST"]
-    // credentials: true,
   }
 });
 io.on('connection', (socket) => {
