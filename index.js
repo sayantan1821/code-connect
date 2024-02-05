@@ -25,13 +25,13 @@ app.use('/', (req, res) => {
   res.send('API is running');
 });
 
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static('client/build'));
+// if (process.env.NODE_ENV === 'production') {
+//   app.use(express.static('client/build'));
 
-  app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
-  });
-}
+//   app.get('*', (req, res) => {
+//     res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
+//   });
+// }
 
 const PORT = process.env.PORT || 1821;
 
@@ -39,16 +39,16 @@ const server = app.listen(PORT, () =>
   console.log(`Server started on port ${PORT}`)
 );
 const io = require('socket.io')(server, {
-  pingTimeout: 60000,
-  // cors: {
-  //   origin: '*'
-  //   // methods:"*"
-  //   // credentials: true,
-  // }
+  pingTimeout: 10000,
   cors: {
-    origin: "http://localhost:1822",
-    methods: ["GET", "POST"]
+    origin: '*',
+    methods: "*"
+    // credentials: true,
   }
+  // cors: {
+  //   origin: "http://localhost:1822",
+  //   methods: ["GET", "POST"]
+  // }
 });
 io.on('connection', (socket) => {
   console.log('Connected to socket.io');
